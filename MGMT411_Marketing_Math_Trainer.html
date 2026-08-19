@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MGMT 411 · Marketing Math Practice</title>
+<style>
+  :root{
+    --navy:#003B5C;
+    --navy-deep:#00293F;
+    --orange:#F47C30;
+    --ink:#313339;
+    --muted:#6B7280;
+    --line:#E3E7EB;
+    --bg:#F4F6F8;
+    --card:#FFFFFF;
+    --good:#1B7F5A;
+    --good-bg:#E8F5EF;
+    --bad:#B3261E;
+    --bad-bg:#FDECEA;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:18px 24px;
+  }
+  .head-inner{max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between}
+  .eyebrow{color:var(--orange);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+  h1{font-size:22px;margin:0;font-weight:bold;letter-spacing:.01em}
+  .sub{color:#C6D3DC;font-size:13px;margin-top:3px}
+  .scoreboard{display:flex;gap:10px}
+  .stat{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:7px 13px;text-align:center;min-width:74px}
+  .stat b{display:block;font-size:19px;line-height:1.15}
+  .stat span{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#C6D3DC}
+
+  main{max-width:1120px;margin:0 auto;padding:22px 24px 60px}
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:22px;align-items:start}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .card-pad{padding:20px 22px}
+
+  .topics{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .chip{
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    border-radius:999px;padding:7px 15px;font-size:13px;cursor:pointer;font-family:inherit;
+    transition:background .12s,border-color .12s,color .12s;
+  }
+  .chip:hover{border-color:#B8C2CB}
+  .chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .chip:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+
+  .qhead{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:14px 22px;flex-wrap:wrap}
+  .tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:bold;color:var(--navy);background:#EAF1F5;border-radius:5px;padding:4px 9px}
+  .qcount{font-size:12px;color:var(--muted)}
+
+  .prompt{font-size:16.5px;margin:0 0 16px}
+  .prompt em{font-style:normal;font-weight:bold}
+  .givens{border:1px solid var(--line);border-radius:9px;overflow:hidden;margin:0 0 18px}
+  .givens div{display:flex;justify-content:space-between;gap:14px;padding:9px 14px;font-size:14px}
+  .givens div:nth-child(odd){background:#FAFBFC}
+  .givens .k{color:var(--muted)}
+  .givens .v{font-weight:bold;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .ask{font-weight:bold;margin:0 0 12px;font-size:15.5px}
+  .answer-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .field{position:relative;display:flex;align-items:center}
+  .field .pre,.field .post{position:absolute;color:var(--muted);font-size:15px;pointer-events:none}
+  .field .pre{left:12px}
+  .field .post{right:12px}
+  input[type=text]{
+    font-family:inherit;font-size:16px;padding:11px 14px;border:1px solid #C9D1D8;border-radius:9px;
+    width:210px;color:var(--ink);background:#fff;font-variant-numeric:tabular-nums;
+  }
+  input.pad-l{padding-left:26px}
+  input.pad-r{padding-right:30px}
+  input[type=text]:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,59,92,.12)}
+  .btn{
+    font-family:inherit;font-size:14px;font-weight:bold;padding:11px 20px;border-radius:9px;cursor:pointer;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--navy);color:#fff}
+  .btn-primary:hover{background:var(--navy-deep)}
+  .btn-ghost{background:#fff;border-color:#C9D1D8;color:var(--ink)}
+  .btn-ghost:hover{border-color:#96A3AD}
+  .btn-orange{background:var(--orange);color:#fff}
+  .btn-orange:hover{background:#DC6C24}
+  .btn:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+  .btn[disabled]{opacity:.5;cursor:default}
+  .helper{font-size:12.5px;color:var(--muted);margin-top:9px}
+
+  .choices{display:grid;gap:9px;margin-bottom:4px}
+  .choice{
+    text-align:left;font-family:inherit;font-size:15px;background:#fff;border:1px solid #C9D1D8;border-radius:9px;
+    padding:12px 14px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;
+  }
+  .choice:hover{border-color:#96A3AD}
+  .choice .ltr{font-weight:bold;color:var(--navy);min-width:18px}
+  .choice[aria-pressed="true"]{border-color:var(--navy);box-shadow:0 0 0 3px rgba(0,59,92,.12)}
+  .choice.correct{border-color:var(--good);background:var(--good-bg)}
+  .choice.wrong{border-color:var(--bad);background:var(--bad-bg)}
+
+  .feedback{margin-top:18px;border-radius:10px;padding:14px 16px;font-size:14.5px;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--good-bg);border:1px solid #BFE3D3;color:#14563E}
+  .feedback.no{background:var(--bad-bg);border:1px solid #F3C9C5;color:#8A1D17}
+  .feedback b{font-weight:bold}
+
+  .hintbox{margin-top:14px;background:#FFF6EF;border:1px solid #F8D8BE;border-radius:10px;padding:13px 15px;font-size:14px;display:none}
+  .hintbox.show{display:block}
+
+  .steps{margin-top:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden;display:none}
+  .steps.show{display:block}
+  .steps h3{margin:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--navy);padding:9px 15px}
+  .steps ol{margin:0;padding:12px 15px 14px 34px}
+  .steps li{margin:0 0 9px;font-size:14.5px}
+  .steps li:last-child{margin-bottom:0}
+  .math{font-family:"Menlo",Consolas,monospace;font-size:13.5px;background:#F4F6F8;border-radius:6px;padding:3px 7px;display:inline-block;margin-top:3px;font-variant-numeric:tabular-nums}
+
+  .nextrow{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  /* Reference card */
+  .ref h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin:0 0 4px}
+  .ref .note{font-size:12px;color:var(--muted);margin:0 0 12px}
+  details.f{border-top:1px solid var(--line)}
+  details.f:first-of-type{border-top:none}
+  details.f summary{cursor:pointer;padding:11px 2px;font-size:14px;font-weight:bold;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center}
+  details.f summary::-webkit-details-marker{display:none}
+  details.f summary::after{content:"+";color:var(--orange);font-weight:bold;font-size:16px}
+  details.f[open] summary::after{content:"–"}
+  details.f .body{padding:0 2px 13px;font-size:13.5px;color:#4A4E55}
+  .fml{font-family:"Menlo",Consolas,monospace;font-size:13px;background:#F4F6F8;border-left:3px solid var(--orange);border-radius:4px;padding:7px 10px;margin:6px 0;font-variant-numeric:tabular-nums}
+  .ref ul{margin:6px 0 0 18px;padding:0}
+  .ref li{margin-bottom:5px}
+  footer{max-width:1120px;margin:0 auto;padding:0 24px 40px;font-size:12px;color:var(--muted)}
+  .kbd{font-family:"Menlo",Consolas,monospace;font-size:11px;border:1px solid var(--line);background:#fff;border-radius:4px;padding:1px 5px}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-inner">
+    <div>
+      <div class="eyebrow">MGMT 411 · Marketing Management</div>
+      <h1>Marketing Math Practice</h1>
+      <div class="sub">Break-even · target profit · margin vs. markup — unlimited randomized problems</div>
+    </div>
+    <div class="scoreboard">
+      <div class="stat"><b id="s-correct">0</b><span>Correct</span></div>
+      <div class="stat"><b id="s-acc">—</b><span>Accuracy</span></div>
+      <div class="stat"><b id="s-streak">0</b><span>Streak</span></div>
+      <div class="stat"><b id="s-best">0</b><span>Best</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="topics" id="topics" role="group" aria-label="Choose a topic">
+    <button class="chip" data-topic="mixed" aria-pressed="true">Mixed (all topics)</button>
+    <button class="chip" data-topic="be" aria-pressed="false">Break-even volume</button>
+    <button class="chip" data-topic="tp" aria-pressed="false">Break-even with a profit goal</button>
+    <button class="chip" data-topic="mm" aria-pressed="false">Margin % vs. markup %</button>
+  </div>
+
+  <div class="layout">
+    <section class="card" aria-live="polite">
+      <div class="qhead">
+        <span class="tag" id="q-tag">Break-even</span>
+        <span class="qcount" id="q-count">Question 1</span>
+      </div>
+      <div class="card-pad">
+        <p class="prompt" id="q-prompt"></p>
+        <div class="givens" id="q-givens"></div>
+        <p class="ask" id="q-ask"></p>
+
+        <div id="numeric-area">
+          <div class="answer-row">
+            <span class="field" id="field-wrap">
+              <span class="pre" id="pre-sym" style="display:none">$</span>
+              <input type="text" id="answer" inputmode="decimal" autocomplete="off" aria-label="Your answer">
+              <span class="post" id="post-sym" style="display:none">%</span>
+            </span>
+            <button class="btn btn-primary" id="check">Check answer</button>
+            <button class="btn btn-ghost" id="hint">Hint</button>
+          </div>
+          <div class="helper" id="helper"></div>
+        </div>
+
+        <div class="choices" id="choice-area" style="display:none"></div>
+
+        <div class="hintbox" id="hintbox"></div>
+        <div class="feedback" id="feedback"></div>
+
+        <div class="steps" id="steps">
+          <h3>Worked solution</h3>
+          <ol id="steps-list"></ol>
+        </div>
+
+        <div class="nextrow">
+          <button class="btn btn-orange" id="next">Next problem →</button>
+          <button class="btn btn-ghost" id="reveal">Show me the solution</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card card-pad ref">
+      <h2>Formula reference</h2>
+      <p class="note">Same formulas as the lecture deck. Open what you need.</p>
+
+      <details class="f" open>
+        <summary>Break-even</summary>
+        <div class="body">
+          Break-even volume is where profit = 0, i.e. total revenue = total cost.
+          <div class="fml">P × Q = (UVC × Q) + FC</div>
+          <div class="fml">Unit contribution (margin per unit) = P − UVC</div>
+          <div class="fml">BEV = FC ÷ (P − UVC)</div>
+          <ul>
+            <li>P = price per unit</li>
+            <li>Q = units sold</li>
+            <li>UVC = variable cost per unit</li>
+            <li>FC = total fixed cost</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="f">
+        <summary>Adding a profit goal</summary>
+        <div class="body">
+          A target profit behaves exactly like more fixed cost — add it to the numerator.
+          <div class="fml">Q = (FC + target profit) ÷ (P − UVC)</div>
+          And running it the other direction:
+          <div class="fml">Profit = Q × (P − UVC) − FC</div>
+        </div>
+      </details>
+
+      <details class="f">
+        <summary>Margin % and markup %</summary>
+        <div class="body">
+          Same numerator, different denominator.
+          <div class="fml">Margin % = (P − VC) ÷ P</div>
+          <div class="fml">Markup % = (P − VC) ÷ VC</div>
+          If you are not the manufacturer, VC is the cost to buy from your supplier and P is your selling price.
+        </div>
+      </details>
+
+      <details class="f">
+        <summary>Converting between them</summary>
+        <div class="body">
+          <div class="fml">Margin = Markup ÷ (1 + Markup)</div>
+          <div class="fml">Markup = Margin ÷ (1 − Margin)</div>
+          For the same product, markup % is always the bigger number.
+        </div>
+      </details>
+
+      <details class="f">
+        <summary>Pricing off a target</summary>
+        <div class="body">
+          <div class="fml">P = VC ÷ (1 − target margin)</div>
+          <div class="fml">P = VC × (1 + target markup)</div>
+        </div>
+      </details>
+
+      <details class="f">
+        <summary>Fixed vs. variable costs</summary>
+        <div class="body">
+          Fixed costs don't move with quantity produced (plant, engineers, advertising, salaried staff).
+          Variable costs rise with each unit (materials, production-line labor, packaging, per-unit shipping).
+        </div>
+      </details>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  Tip: press <span class="kbd">Enter</span> to check your answer, then <span class="kbd">Enter</span> again for the next problem.
+  Answers are accepted with normal rounding. Nothing is stored or submitted — refresh to start a clean session.
+</footer>
+
+<script>
+/* ------------------------------------------------------------------ *
+ * MGMT 411 Marketing Math trainer
+ * Randomized problem generators for break-even, target profit,
+ * and margin vs. markup. All numbers are built so the answers stay
+ * clean; every answer is computed from the displayed inputs.
+ * ------------------------------------------------------------------ */
+
+/* ---------- small helpers ---------- */
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const r2 = x => Math.round(x*100)/100;
+const money = x => {
+  const neg = x < 0; x = Math.abs(x);
+  const s = (Math.round(x*100)/100 % 1 === 0)
+    ? Math.round(x).toLocaleString('en-US')
+    : (Math.round(x*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return (neg?'−$':'$') + s;
+};
+const units = x => Math.round(x).toLocaleString('en-US');
+const pct = x => {
+  const v = Math.round(x*10)/10;
+  return (v % 1 === 0 ? v.toFixed(0) : v.toFixed(1)) + '%';
+};
+
+/* Round a cost to a "believable" increment for its size. */
+function niceCost(x){
+  if (x < 10)   return Math.round(x*20)/20;   // nearest 5 cents
+  if (x < 100)  return Math.round(x);         // nearest dollar
+  if (x < 1000) return Math.round(x/5)*5;     // nearest $5
+  return Math.round(x/25)*25;                 // nearest $25
+}
+
+/* ---------- scenarios: some straight from lecture, some new ---------- */
+const SCENARIOS = [
+  {co:'Apple',        prod:'Apple Watch SE',                  unit:'watches',       prices:[199,229,249,279]},
+  {co:'Apple',        prod:'Apple Watch Ultra',               unit:'watches',       prices:[699,749,799]},
+  {co:'Crest',        prod:'tube of whitening toothpaste',    unit:'tubes',         prices:[3.5,4,4.5,5,6]},
+  {co:'Blue Bottle',  prod:'12 oz bag of single-origin coffee',unit:'bags',         prices:[14,16,18,20,22]},
+  {co:'Casper',       prod:'queen mattress',                  unit:'mattresses',    prices:[600,700,750,800,900]},
+  {co:'Allbirds',     prod:'pair of wool runners',            unit:'pairs',         prices:[90,100,110,120]},
+  {co:'RXBAR',        prod:'protein bar',                     unit:'bars',          prices:[2,2.5,3,3.5]},
+  {co:'Hydro Flask',  prod:'32 oz insulated bottle',          unit:'bottles',       prices:[30,35,40,45]},
+  {co:'Sonos',        prod:'portable Bluetooth speaker',       unit:'speakers',      prices:[150,180,200,220]},
+  {co:'HelloFresh',   prod:'weekly meal-kit box',             unit:'boxes',         prices:[50,60,70,80]},
+  {co:'Supergoop',    prod:'bottle of mineral sunscreen',     unit:'bottles',       prices:[22,25,28,32]},
+  {co:'Rad Power',    prod:'commuter e-bike',                 unit:'e-bikes',       prices:[1200,1400,1500,1600]},
+  {co:'Chewy',        prod:'bag of dog treats',               unit:'bags',          prices:[10,12,14,16]},
+  {co:'Yeti',         prod:'hard cooler',                     unit:'coolers',       prices:[250,300,350,400]},
+  {co:'Olipop',       prod:'six-pack of prebiotic soda',      unit:'six-packs',     prices:[8,9,10,12]},
+  {co:'Peloton',      prod:'annual app subscription',         unit:'subscriptions', prices:[120,144,180,200]}
+];
+
+const MARGIN_FRACTIONS = [0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6];
+
+/* Draw a scenario with a clean price / unit variable cost / unit contribution. */
+function drawEconomics(){
+  for (let i=0;i<80;i++){
+    const sc = pick(SCENARIOS);
+    const P  = pick(sc.prices);
+    const m  = pick(MARGIN_FRACTIONS);
+    const UVC = niceCost(P*(1-m));
+    const uc = r2(P - UVC);
+    if (UVC <= 0 || uc <= 0) continue;
+    const realM = uc/P;
+    if (realM < 0.18 || realM > 0.72) continue;
+    return {sc, P, UVC, uc};
+  }
+  return {sc:SCENARIOS[0], P:200, UVC:120, uc:80};
+}
+
+/* Plausible unit volumes given a price point. */
+function volumesFor(P){
+  if (P >= 500) return [400,500,600,750,800,1000,1200,1500,2000,2500];
+  if (P >= 60)  return [1500,2000,2500,3000,4000,5000,7500,10000,12000,15000];
+  return [20000,25000,30000,40000,50000,60000,75000,100000,120000,150000];
+}
+
+/* ---------- generators ---------- */
+/* Each returns:
+   {topic, tag, prompt, givens:[[k,v]...], ask, type, answer, hint, steps:[..],
+    helper?, choices?, correct?}                                             */
+
+function genBreakevenVolume(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const V = pick(volumesFor(P));
+  const FC = r2(uc*V);
+  return {
+    topic:'be', tag:'Break-even volume',
+    prompt:`<em>${sc.co}</em> is launching a new ${sc.prod}. Before a single unit sells, the launch carries ${money(FC)} in fixed costs — tooling, salaried engineers, and the ad campaign.`,
+    givens:[
+      ['Price to the customer (P)', money(P)],
+      ['Unit variable cost (UVC)', money(UVC)],
+      ['Total fixed costs (FC)', money(FC)]
+    ],
+    ask:`How many ${sc.unit} must ${sc.co} sell to break even?`,
+    type:'units', answer:V,
+    hint:`Find the margin per unit first: P − UVC. Then ask how many of those it takes to cover ${money(FC)} of fixed cost.`,
+    steps:[
+      `Unit contribution (margin per unit) = P − UVC<div class="math">${money(P)} − ${money(UVC)} = ${money(uc)} per unit</div>`,
+      `BEV = FC ÷ unit contribution<div class="math">${money(FC)} ÷ ${money(uc)} = ${units(V)} ${sc.unit}</div>`,
+      `Every unit past ${units(V)} contributes ${money(uc)} straight to profit.`
+    ]
+  };
+}
+
+function genBreakevenPrice(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const V = pick(volumesFor(P));
+  const FC = r2(uc*V);
+  return {
+    topic:'be', tag:'Break-even → price',
+    prompt:`<em>${sc.co}</em> has already committed to a production run of the ${sc.prod}. Sales is confident it can move exactly ${units(V)} ${sc.unit} this year, and finance will not approve a loss.`,
+    givens:[
+      ['Total fixed costs (FC)', money(FC)],
+      ['Unit variable cost (UVC)', money(UVC)],
+      ['Units it can sell (Q)', units(V)+' '+sc.unit]
+    ],
+    ask:`What price must ${sc.co} charge to break even at that volume?`,
+    type:'currency', answer:P,
+    hint:`Work backwards: at break-even, unit contribution × Q = FC. Solve for the unit contribution you need, then add UVC back on.`,
+    steps:[
+      `At break-even, total contribution has to cover fixed cost: (P − UVC) × Q = FC.`,
+      `Required unit contribution = FC ÷ Q<div class="math">${money(FC)} ÷ ${units(V)} = ${money(uc)} per unit</div>`,
+      `P = UVC + required contribution<div class="math">${money(UVC)} + ${money(uc)} = ${money(P)}</div>`
+    ]
+  };
+}
+
+function genBreakevenUVC(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const V = pick(volumesFor(P));
+  const FC = r2(uc*V);
+  return {
+    topic:'be', tag:'Break-even → cost ceiling',
+    prompt:`Retail partners have told <em>${sc.co}</em> that the ${sc.prod} has to sell for ${money(P)} — that price is not negotiable. Fixed costs are ${money(FC)}, and the plan calls for breaking even at ${units(V)} ${sc.unit}.`,
+    givens:[
+      ['Price to the customer (P)', money(P)],
+      ['Total fixed costs (FC)', money(FC)],
+      ['Break-even target (Q)', units(V)+' '+sc.unit]
+    ],
+    ask:`What is the most ${sc.co} can afford to spend in variable cost per unit?`,
+    type:'currency', answer:UVC,
+    hint:`First find the unit contribution the plan requires (FC ÷ Q). Whatever is left of the price is your cost ceiling.`,
+    steps:[
+      `Required unit contribution = FC ÷ Q<div class="math">${money(FC)} ÷ ${units(V)} = ${money(uc)} per unit</div>`,
+      `UVC = P − required contribution<div class="math">${money(P)} − ${money(uc)} = ${money(UVC)}</div>`,
+      `Spend a penny more than ${money(UVC)} per unit and ${units(V)} ${sc.unit} no longer covers the fixed costs.`
+    ]
+  };
+}
+
+function genBreakevenAddedFC(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const vols = volumesFor(P);
+  const V = pick(vols);
+  const FC = r2(uc*V);
+  const shortlist = vols.slice(0, Math.max(3, Math.floor(vols.length/2)));
+  let extraUnits = pick(shortlist);
+  for (let i=0;i<20 && extraUnits===V;i++) extraUnits = pick(shortlist);
+  const AD = r2(uc*extraUnits);
+  return {
+    topic:'be', tag:'Break-even → shifting fixed costs',
+    prompt:`<em>${sc.co}</em> currently breaks even on the ${sc.prod} with ${money(FC)} in fixed costs. Marketing now wants to add a ${money(AD)} influencer campaign, which is a fixed cost — it does not change what each unit costs to make.`,
+    givens:[
+      ['Price to the customer (P)', money(P)],
+      ['Unit variable cost (UVC)', money(UVC)],
+      ['Existing fixed costs', money(FC)],
+      ['New campaign (fixed)', money(AD)]
+    ],
+    ask:`What is the new break-even volume in ${sc.unit}?`,
+    type:'units', answer:V+extraUnits,
+    hint:`Add the campaign to fixed costs, then divide by the same unit contribution. Nothing on the variable side moved.`,
+    steps:[
+      `Unit contribution = P − UVC<div class="math">${money(P)} − ${money(UVC)} = ${money(uc)} per unit</div>`,
+      `New fixed costs = ${money(FC)} + ${money(AD)} = ${money(FC+AD)}`,
+      `New BEV = ${money(FC+AD)} ÷ ${money(uc)} = <b>${units(V+extraUnits)} ${sc.unit}</b>`,
+      `Another way to see it: the campaign has to pay for itself, and ${money(AD)} ÷ ${money(uc)} = ${units(extraUnits)} incremental ${sc.unit}.`
+    ]
+  };
+}
+
+function genTargetProfitVolume(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const vols = volumesFor(P);
+  const V = pick(vols);
+  const FC = r2(uc*V);
+  let extra = pick(vols);
+  for (let i=0;i<20 && extra===V;i++) extra = pick(vols);   // don't let FC and the profit goal be twins
+  const PROFIT = r2(uc*extra);
+  return {
+    topic:'tp', tag:'Profit goal → volume',
+    prompt:`<em>${sc.co}</em>'s brand manager doesn't just want to break even on the ${sc.prod} — the plan has to deliver ${money(PROFIT)} in profit this year.`,
+    givens:[
+      ['Price to the customer (P)', money(P)],
+      ['Unit variable cost (UVC)', money(UVC)],
+      ['Total fixed costs (FC)', money(FC)],
+      ['Target profit', money(PROFIT)]
+    ],
+    ask:`How many ${sc.unit} does ${sc.co} have to sell?`,
+    type:'units', answer:V+extra,
+    hint:`Treat the profit goal exactly like more fixed cost: Q = (FC + target profit) ÷ (P − UVC).`,
+    steps:[
+      `Unit contribution = P − UVC<div class="math">${money(P)} − ${money(UVC)} = ${money(uc)} per unit</div>`,
+      `Roll the profit goal into the numerator: FC + profit = ${money(FC)} + ${money(PROFIT)} = ${money(FC+PROFIT)}`,
+      `Q = ${money(FC+PROFIT)} ÷ ${money(uc)} = <b>${units(V+extra)} ${sc.unit}</b>`,
+      `Check: ${units(V+extra)} × ${money(uc)} = ${money((V+extra)*uc)} of contribution, minus ${money(FC)} of fixed cost = ${money(PROFIT)} profit.`
+    ]
+  };
+}
+
+function genProfitAtVolume(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const vols = volumesFor(P);
+  const V = pick(vols);
+  const FC = r2(uc*V);
+  const mult = pick([1.5,2,2.5,3]);
+  const Q = Math.round(V*mult);
+  const profit = r2(Q*uc - FC);
+  return {
+    topic:'tp', tag:'Volume → profit',
+    prompt:`The year is over. <em>${sc.co}</em> sold ${units(Q)} ${sc.unit} of the ${sc.prod}.`,
+    givens:[
+      ['Price to the customer (P)', money(P)],
+      ['Unit variable cost (UVC)', money(UVC)],
+      ['Total fixed costs (FC)', money(FC)],
+      ['Units sold (Q)', units(Q)+' '+sc.unit]
+    ],
+    ask:`What profit did the ${sc.prod} generate?`,
+    type:'currency', answer:profit,
+    hint:`Profit = Q × (P − UVC) − FC. Total up the contribution first, then subtract the fixed costs once.`,
+    steps:[
+      `Unit contribution = ${money(P)} − ${money(UVC)} = ${money(uc)} per unit`,
+      `Total contribution = Q × unit contribution<div class="math">${units(Q)} × ${money(uc)} = ${money(Q*uc)}</div>`,
+      `Profit = total contribution − FC<div class="math">${money(Q*uc)} − ${money(FC)} = ${money(profit)}</div>`,
+      `Note that break-even was ${units(V)} ${sc.unit}; the ${units(Q-V)} units beyond it are what produced the profit.`
+    ]
+  };
+}
+
+function genTargetProfitPrice(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const vols = volumesFor(P);
+  const V = pick(vols);
+  const FC = r2(uc*V);
+  let extra = pick(vols);
+  for (let i=0;i<20 && extra===V;i++) extra = pick(vols);
+  const PROFIT = r2(uc*extra);
+  const Q = V + extra;
+  return {
+    topic:'tp', tag:'Profit goal → price',
+    prompt:`<em>${sc.co}</em> can realistically sell ${units(Q)} ${sc.unit} of the ${sc.prod} — that is what the category will bear. Fixed costs are ${money(FC)}, each unit costs ${money(UVC)} to make, and the division has been handed a ${money(PROFIT)} profit target.`,
+    givens:[
+      ['Unit variable cost (UVC)', money(UVC)],
+      ['Total fixed costs (FC)', money(FC)],
+      ['Units it can sell (Q)', units(Q)+' '+sc.unit],
+      ['Target profit', money(PROFIT)]
+    ],
+    ask:`What price does ${sc.co} need to charge?`,
+    type:'currency', answer:P,
+    hint:`The contribution from Q units has to cover FC plus the profit target. Find the required per-unit contribution, then add UVC.`,
+    steps:[
+      `Contribution needed in total = FC + profit target<div class="math">${money(FC)} + ${money(PROFIT)} = ${money(FC+PROFIT)}</div>`,
+      `Required contribution per unit = ${money(FC+PROFIT)} ÷ ${units(Q)} = ${money(uc)}`,
+      `P = UVC + required contribution<div class="math">${money(UVC)} + ${money(uc)} = ${money(P)}</div>`
+    ]
+  };
+}
+
+function genMarginPct(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const ans = 100*uc/P;
+  return {
+    topic:'mm', tag:'Margin %',
+    prompt:`<em>${sc.co}</em> sells the ${sc.prod} for ${money(P)}. It costs ${money(UVC)} per unit to make.`,
+    givens:[['Selling price (P)', money(P)],['Unit variable cost (VC)', money(UVC)]],
+    ask:`What is the margin percentage?`,
+    type:'percent', answer:ans,
+    hint:`Margin % divides by the <b>price</b>: (P − VC) ÷ P. Dividing by cost instead gives you markup.`,
+    steps:[
+      `Dollar margin = P − VC<div class="math">${money(P)} − ${money(UVC)} = ${money(uc)}</div>`,
+      `Margin % = (P − VC) ÷ P<div class="math">${money(uc)} ÷ ${money(P)} = ${pct(ans)}</div>`,
+      `For contrast, the markup here would be ${money(uc)} ÷ ${money(UVC)} = ${pct(100*uc/UVC)} — same numerator, different denominator.`
+    ]
+  };
+}
+
+function genMarkupPct(){
+  const {sc,P,UVC,uc} = drawEconomics();
+  const ans = 100*uc/UVC;
+  return {
+    topic:'mm', tag:'Markup %',
+    prompt:`<em>${sc.co}</em> makes the ${sc.prod} for ${money(UVC)} a unit and sells it for ${money(P)}.`,
+    givens:[['Selling price (P)', money(P)],['Unit variable cost (VC)', money(UVC)]],
+    ask:`What is the markup percentage?`,
+    type:'percent', answer:ans,
+    hint:`Markup % divides by the <b>cost</b>: (P − VC) ÷ VC. It answers "how much did we add on top of what it cost us?"`,
+    steps:[
+      `Dollar margin = P − VC<div class="math">${money(P)} − ${money(UVC)} = ${money(uc)}</div>`,
+      `Markup % = (P − VC) ÷ VC<div class="math">${money(uc)} ÷ ${money(UVC)} = ${pct(ans)}</div>`,
+      `The margin on the same product is only ${pct(100*uc/P)}, because price is the bigger denominator.`
+    ]
+  };
+}
+
+function genChannelMargin(){
+  const {sc,P,UVC} = drawEconomics();
+  const cost = UVC, price = P, dollar = r2(price-cost);
+  const askMargin = Math.random() < 0.5;
+  const ans = askMargin ? 100*dollar/price : 100*dollar/cost;
+  return {
+    topic:'mm', tag: askMargin ? 'Retailer margin %' : 'Retailer markup %',
+    prompt:`A specialty retailer buys the ${sc.prod} from <em>${sc.co}</em> at ${money(cost)} a unit and puts it on the shelf at ${money(price)}. The retailer isn't manufacturing anything — its "variable cost" is what it pays its supplier.`,
+    givens:[['Retailer\'s selling price (P)', money(price)],['Cost to buy from supplier (VC)', money(cost)]],
+    ask: askMargin ? `What is the retailer's margin percentage?` : `What is the retailer's markup percentage?`,
+    type:'percent', answer:ans,
+    hint: askMargin
+      ? `Same margin formula, with cost-to-purchase standing in for VC: (P − VC) ÷ P.`
+      : `Same markup formula, with cost-to-purchase standing in for VC: (P − VC) ÷ VC.`,
+    steps:[
+      `Dollar margin = ${money(price)} − ${money(cost)} = ${money(dollar)}`,
+      askMargin
+        ? `Margin % = ${money(dollar)} ÷ ${money(price)} = ${pct(100*dollar/price)}`
+        : `Markup % = ${money(dollar)} ÷ ${money(cost)} = ${pct(100*dollar/cost)}`,
+      `Both numbers describe the same ${money(dollar)}; only the denominator changes (price for margin, cost for markup).`
+    ]
+  };
+}
+
+function genMarkupToMargin(){
+  const mk = pick([25,30,40,50,60,75,100,125,150,200]);
+  const {sc,UVC} = drawEconomics();
+  const cost = UVC;
+  const price = r2(cost*(1+mk/100));
+  const ans = 100*(mk/100)/(1+mk/100);
+  return {
+    topic:'mm', tag:'Markup → margin',
+    prompt:`A ${sc.co} sales rep tells you the ${sc.prod} carries a <em>${pct(mk)} markup</em> over cost. Your CFO only ever talks in margins.`,
+    givens:[['Markup on cost', pct(mk)]],
+    ask:`What margin percentage does that correspond to?`,
+    type:'percent', answer:ans,
+    hint:`Margin = Markup ÷ (1 + Markup). Or invent a cost of $100, mark it up, and compute the margin on the resulting price.`,
+    steps:[
+      `Margin = Markup ÷ (1 + Markup)<div class="math">${(mk/100).toFixed(2)} ÷ ${(1+mk/100).toFixed(2)} = ${pct(ans)}</div>`,
+      `Sanity check with real dollars: cost ${money(cost)} marked up ${pct(mk)} gives a price of ${money(price)}, so margin = ${money(r2(price-cost))} ÷ ${money(price)} = ${pct(100*(price-cost)/price)}.`,
+      `Markup always looks bigger than margin — worth remembering when someone quotes you one and means the other.`
+    ]
+  };
+}
+
+function genMarginToMarkup(){
+  const m = pick([20,25,30,35,40,45,50,60]);
+  const {sc,P} = drawEconomics();
+  const price = P;
+  const cost = r2(price*(1-m/100));
+  const ans = 100*(m/100)/(1-m/100);
+  return {
+    topic:'mm', tag:'Margin → markup',
+    prompt:`Category management at a big-box retailer will not stock the ${sc.prod} unless the store earns a <em>${pct(m)} margin</em> on it. The buyer wants to know what that means as a markup over what they pay you.`,
+    givens:[['Required margin', pct(m)]],
+    ask:`What markup percentage over cost is that?`,
+    type:'percent', answer:ans,
+    hint:`Markup = Margin ÷ (1 − Margin).`,
+    steps:[
+      `Markup = Margin ÷ (1 − Margin)<div class="math">${(m/100).toFixed(2)} ÷ ${(1-m/100).toFixed(2)} = ${pct(ans)}</div>`,
+      `Check it in dollars: if the retailer sells at ${money(price)} with a ${pct(m)} margin, it paid ${money(cost)}. Markup = ${money(r2(price-cost))} ÷ ${money(cost)} = ${pct(100*(price-cost)/cost)}.`
+    ]
+  };
+}
+
+function genPriceFromMargin(){
+  const {sc,UVC} = drawEconomics();
+  const cost = UVC;
+  const m = pick([20,25,30,40,50,60]);
+  const ans = r2(cost/(1-m/100));
+  return {
+    topic:'mm', tag:'Target margin → price',
+    prompt:`<em>${sc.co}</em> spends ${money(cost)} in variable cost on each ${sc.prod} and has committed to a ${pct(m)} margin.`,
+    givens:[['Unit variable cost (VC)', money(cost)],['Target margin', pct(m)]],
+    ask:`What price does that require?`,
+    type:'currency', answer:ans,
+    hint:`If margin is ${pct(m)} of price, then cost is the other ${pct(100-m)} of price. So P = VC ÷ (1 − margin).`,
+    steps:[
+      `Cost is the share of price that isn't margin: ${pct(100-m)} of P.`,
+      `P = VC ÷ (1 − margin)<div class="math">${money(cost)} ÷ ${(1-m/100).toFixed(2)} = ${money(ans)}</div>`,
+      `Careful: multiplying cost by ${(1+m/100).toFixed(2)} instead gives ${money(r2(cost*(1+m/100)))}, which is a ${pct(m)} <em>markup</em>, not a ${pct(m)} margin.`
+    ]
+  };
+}
+
+function genPriceFromMarkup(){
+  const {sc,UVC} = drawEconomics();
+  const cost = UVC;
+  const mk = pick([25,30,40,50,60,75,100]);
+  const ans = r2(cost*(1+mk/100));
+  return {
+    topic:'mm', tag:'Target markup → price',
+    prompt:`<em>${sc.co}</em> prices the ${sc.prod} on a cost-plus basis: every unit gets a ${pct(mk)} markup over its variable cost of ${money(cost)}.`,
+    givens:[['Unit variable cost (VC)', money(cost)],['Target markup', pct(mk)]],
+    ask:`What is the selling price?`,
+    type:'currency', answer:ans,
+    hint:`P = VC × (1 + markup).`,
+    steps:[
+      `P = VC × (1 + markup)<div class="math">${money(cost)} × ${(1+mk/100).toFixed(2)} = ${money(ans)}</div>`,
+      `The resulting margin is ${money(r2(ans-cost))} ÷ ${money(ans)} = ${pct(100*(ans-cost)/ans)} — smaller than the ${pct(mk)} markup.`
+    ]
+  };
+}
+
+function genConceptMC(){
+  const bank = [
+    () => {
+      const {sc,P,UVC,uc} = drawEconomics();
+      const marginPct = 100*uc/P, markupPct = 100*uc/UVC;
+      return {
+        topic:'mm', tag:'Concept check',
+        prompt:`A buyer asks <em>${sc.co}</em> for "40% on the ${sc.prod}." The brand manager builds the price by taking cost and adding 40% on top.`,
+        givens:[],
+        ask:`If the buyer meant a 40% <b>margin</b>, what has the brand manager actually delivered?`,
+        choices:[
+          'A 40% margin — the two calculations give the same price.',
+          'Less than the buyer wanted: adding 40% to cost is a 40% markup, which is only a 28.6% margin.',
+          'More than the buyer wanted: a 40% markup works out to a 66.7% margin.',
+          'It depends on the fixed costs.'
+        ],
+        correct:1,
+        hint:`Convert: Margin = Markup ÷ (1 + Markup).`,
+        steps:[
+          `Adding 40% to cost is a markup, not a margin.`,
+          `Margin = 0.40 ÷ 1.40 = 28.6%`,
+          `So the buyer asked for 40% of the selling price and got 28.6% of it. To hand the buyer a true 40% margin, price = cost ÷ 0.60, i.e. a 66.7% markup.`
+        ]
+      };
+    },
+    () => {
+      const {sc,P,UVC,uc} = drawEconomics();
+      const V = pick(volumesFor(P)), FC = r2(uc*V);
+      return {
+        topic:'be', tag:'Concept check',
+        prompt:`<em>${sc.co}</em> breaks even on the ${sc.prod} at ${units(V)} ${sc.unit} (price ${money(P)}, unit variable cost ${money(UVC)}, fixed costs ${money(FC)}). Operations then finds a supplier that cuts unit variable cost by ${money(r2(uc*0.25))}.`,
+        givens:[],
+        ask:`What happens to the break-even volume?`,
+        choices:[
+          'It falls, because the unit contribution rises while fixed costs stay put.',
+          'It rises, because lower cost means less revenue per unit.',
+          'It is unchanged — variable costs don\'t enter the break-even formula.',
+          'It is unchanged, because fixed costs did not change.'
+        ],
+        correct:0,
+        hint:`BEV = FC ÷ (P − UVC). Which piece of that just moved?`,
+        steps:[
+          `Unit contribution goes from ${money(uc)} to ${money(r2(uc*1.25))}.`,
+          `BEV = ${money(FC)} ÷ ${money(r2(uc*1.25))} ≈ ${units(FC/(uc*1.25))} ${sc.unit}, down from ${units(V)}.`,
+          `A bigger denominator with the same numerator always lowers break-even volume. Cutting fixed costs would lower it too — but by shrinking the numerator.`
+        ]
+      };
+    },
+    () => {
+      const {sc,P,UVC,uc} = drawEconomics();
+      return {
+        topic:'be', tag:'Concept check',
+        prompt:`<em>${sc.co}</em> is sorting the costs behind the ${sc.prod} before running a break-even analysis.`,
+        givens:[],
+        ask:`Which of these belongs in <b>fixed</b> costs?`,
+        choices:[
+          'The materials in each unit',
+          'The wages of the production-line workers making each unit',
+          'The salaried engineering team and the ad campaign',
+          'Per-unit shipping to the retailer'
+        ],
+        correct:2,
+        hint:`Ask whether the cost changes when you make one more unit.`,
+        steps:[
+          `Fixed costs don't move with quantity: plant, salaried engineers, advertising.`,
+          `Variable costs scale with each unit: materials, line labor, packaging, per-unit freight.`,
+          `Only the fixed pile goes in the numerator of BEV = FC ÷ (P − UVC); the variable pile lives in UVC.`
+        ]
+      };
+    }
+  ];
+  return pick(bank)();
+}
+
+const GENERATORS = {
+  be: [genBreakevenVolume, genBreakevenVolume, genBreakevenPrice, genBreakevenUVC, genBreakevenAddedFC],
+  tp: [genTargetProfitVolume, genTargetProfitVolume, genProfitAtVolume, genTargetProfitPrice],
+  mm: [genMarginPct, genMarkupPct, genChannelMargin, genMarkupToMargin, genMarginToMarkup,
+       genPriceFromMargin, genPriceFromMarkup]
+};
+
+function makeProblem(topic){
+  // ~1 in 7 problems is a concept check when in mixed mode
+  if (topic === 'mixed' && Math.random() < 0.14) return genConceptMC();
+  const t = topic === 'mixed' ? pick(['be','tp','mm']) : topic;
+  if (topic !== 'mixed' && Math.random() < 0.10){
+    for (let i=0;i<12;i++){ const c = genConceptMC(); if (c.topic === t) return c; }
+  }
+  return pick(GENERATORS[t])();
+}
+
+/* ---------- answer checking ---------- */
+function parseAnswer(raw){
+  if (raw == null) return NaN;
+  let s = String(raw).trim().replace(/,/g,'').replace(/\$/g,'').replace(/%/g,'').replace(/\s/g,'');
+  if (s === '') return NaN;
+  const v = Number(s);
+  return Number.isFinite(v) ? v : NaN;
+}
+function isRight(p, val){
+  if (Number.isNaN(val)) return false;
+  let v = val, a = p.answer;
+  if (p.type === 'percent'){
+    if (Math.abs(v) <= 1.5 && Math.abs(a) > 1.5) v = v*100;  // accept 0.286 for 28.6%
+    return Math.abs(v - a) <= 0.35;
+  }
+  if (p.type === 'currency') return Math.abs(v - a) <= Math.max(0.05, Math.abs(a)*0.002);
+  return Math.abs(v - a) <= Math.max(1, Math.abs(a)*0.002);   // units
+}
+function fmtAnswer(p){
+  if (p.type === 'percent') return pct(p.answer);
+  if (p.type === 'currency') return money(p.answer);
+  return units(p.answer);
+}
+
+/* ---------- state + DOM ---------- */
+const el = id => document.getElementById(id);
+let topic = 'mixed';
+let current = null, answered = false;
+let n = 0, correct = 0, attempted = 0, streak = 0, best = 0;
+
+function renderStats(){
+  el('s-correct').textContent = correct;
+  el('s-acc').textContent = attempted ? Math.round(100*correct/attempted) + '%' : '—';
+  el('s-streak').textContent = streak;
+  el('s-best').textContent = best;
+}
+
+function newProblem(){
+  current = makeProblem(topic);
+  answered = false;
+  n++;
+
+  el('q-tag').textContent = current.tag;
+  el('q-count').textContent = 'Question ' + n;
+  el('q-prompt').innerHTML = current.prompt;
+  el('q-ask').innerHTML = current.ask;
+
+  const g = el('q-givens');
+  if (current.givens && current.givens.length){
+    g.style.display = '';
+    g.innerHTML = current.givens.map(([k,v]) =>
+      `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
+  } else { g.style.display = 'none'; g.innerHTML = ''; }
+
+  el('feedback').className = 'feedback';
+  el('feedback').innerHTML = '';
+  el('hintbox').className = 'hintbox';
+  el('hintbox').innerHTML = '';
+  el('steps').className = 'steps';
+  el('steps-list').innerHTML = '';
+  el('hint').disabled = false;
+  el('reveal').disabled = false;
+
+  const isMC = !!current.choices;
+  el('numeric-area').style.display = isMC ? 'none' : '';
+  el('choice-area').style.display = isMC ? 'grid' : 'none';
+
+  if (isMC){
+    el('choice-area').innerHTML = current.choices.map((c,i) =>
+      `<button class="choice" data-i="${i}" aria-pressed="false"><span class="ltr">${'ABCD'[i]}</span><span>${c}</span></button>`
+    ).join('');
+    [...el('choice-area').children].forEach(b => b.addEventListener('click', () => submitMC(+b.dataset.i)));
+  } else {
+    const inp = el('answer');
+    inp.value = '';
+    inp.readOnly = false;
+    inp.className = '';
+    el('pre-sym').style.display = 'none';
+    el('post-sym').style.display = 'none';
+    if (current.type === 'currency'){ el('pre-sym').style.display = ''; inp.className = 'pad-l'; }
+    if (current.type === 'percent'){ el('post-sym').style.display = ''; inp.className = 'pad-r'; }
+    el('helper').innerHTML =
+      current.type === 'units'    ? 'Enter the number of units (whole units; commas are fine).' :
+      current.type === 'currency' ? 'Enter dollars — cents if the math calls for them.' :
+                                    'Enter a percentage, e.g. <b>33.3</b> (0.333 is accepted too).';
+    el('check').disabled = false;
+    inp.focus();
+  }
+}
+
+function showSolution(){
+  const list = el('steps-list');
+  list.innerHTML = current.steps.map(s => `<li>${s}</li>`).join('');
+  el('steps').className = 'steps show';
+  el('hint').disabled = true;
+  el('reveal').disabled = true;
+}
+
+function lockNumeric(){
+  el('answer').readOnly = true;   // readOnly, not disabled, so focus (and Enter handling) stays put
+  el('check').disabled = true;
+}
+
+function grade(ok, yourText){
+  answered = true;
+  attempted++;
+  if (ok){ correct++; streak++; best = Math.max(best, streak); }
+  else { streak = 0; }
+  renderStats();
+
+  const f = el('feedback');
+  f.className = 'feedback show ' + (ok ? 'ok' : 'no');
+  f.innerHTML = ok
+    ? `<b>Correct.</b> ${current.choices ? '' : fmtAnswer(current) + ' — nicely done.'}`
+    : `<b>Not quite.</b> ${yourText ? 'You entered ' + yourText + '. ' : ''}${current.choices ? '' : 'The answer is <b>' + fmtAnswer(current) + '</b>.'} Walk the steps below and try the next one.`;
+  showSolution();
+  el('next').focus();
+}
+
+function submitNumeric(){
+  if (answered) return;
+  const raw = el('answer').value;
+  const val = parseAnswer(raw);
+  if (Number.isNaN(val)){
+    const f = el('feedback');
+    f.className = 'feedback show no';
+    f.innerHTML = '<b>Enter a number first.</b>';
+    return;
+  }
+  lockNumeric();
+  grade(isRight(current, val), raw.trim());
+}
+
+function submitMC(i){
+  if (answered) return;
+  const ok = i === current.correct;
+  [...el('choice-area').children].forEach((b,j) => {
+    b.disabled = true;
+    if (j === current.correct) b.classList.add('correct');
+    else if (j === i) b.classList.add('wrong');
+  });
+  grade(ok, '');
+}
+
+/* ---------- wiring ---------- */
+el('check').addEventListener('click', submitNumeric);
+el('next').addEventListener('click', newProblem);
+el('reveal').addEventListener('click', () => {
+  if (!answered){
+    answered = true; attempted++; streak = 0; renderStats();
+    if (current.choices){ [...el('choice-area').children].forEach((b,j) => { b.disabled = true; if (j===current.correct) b.classList.add('correct'); }); }
+    else lockNumeric();
+    const f = el('feedback');
+    f.className = 'feedback show no';
+    f.innerHTML = current.choices ? '<b>Solution shown.</b>' : `<b>Solution shown.</b> The answer is <b>${fmtAnswer(current)}</b>.`;
+  }
+  showSolution();
+});
+el('hint').addEventListener('click', () => {
+  el('hintbox').innerHTML = '<b>Hint:</b> ' + current.hint;
+  el('hintbox').className = 'hintbox show';
+  el('hint').disabled = true;
+  if (!current.choices) el('answer').focus();
+});
+/* Enter: first press checks the answer, second press moves on. Handled in exactly
+   one place per focus target so a single keypress never does both. */
+el('answer').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  if (answered) newProblem(); else submitNumeric();
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !answered) return;
+  const a = document.activeElement;
+  if (a && (a.tagName === 'INPUT' || a.tagName === 'BUTTON' || a.tagName === 'SUMMARY')) return; // those handle it themselves
+  e.preventDefault();
+  newProblem();
+});
+[...el('topics').children].forEach(btn => btn.addEventListener('click', () => {
+  topic = btn.dataset.topic;
+  [...el('topics').children].forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+  newProblem();
+}));
+
+renderStats();
+newProblem();
+</script>
+</body>
+</html>
